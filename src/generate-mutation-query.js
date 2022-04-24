@@ -5,7 +5,7 @@
  * @param {string} projectName - The user inputted project name
  * @param {string} columnName - The user inputted column name
  * @param {string} contentId - The id of the issue or pull request
- * @param {"delete"|"archive"|"update"} action - the action to be performed on the card
+ * @param {"delete"|"archive"|"update"|"update_if_exists"} action - the action to be performed on the card
  */
 // if this is important, we will need to refactor the function
 // eslint-disable-next-line max-params
@@ -67,6 +67,14 @@ const generateMutationQuery = (data, projectName, columnName, contentId, action)
 					addProjectCard( input: {
 						contentId: "${contentId}",
 						projectColumnId: "${cardLocations[mutation].columnId}"
+				}) { clientMutationId } }`;
+		}
+		if (action === 'update_if_exists' && cardLocations[mutation].cardId) {
+			// Othervise keep default procedure
+			return `mutation {
+					moveProjectCard( input: {
+						cardId: "${cardLocations[mutation].cardId}",
+						columnId: "${cardLocations[mutation].columnId}"
 				}) { clientMutationId } }`;
 		}
 
